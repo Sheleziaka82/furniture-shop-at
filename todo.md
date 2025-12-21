@@ -31,33 +31,33 @@
 - [x] Implement delivery cost calculator
 
 ## Phase 4: Checkout & Payment
-- [ ] Create multi-step checkout form with progress indicator
-- [ ] Step 1: Contact information (name, email, phone)
-- [ ] Step 2: Delivery address with postal code autocomplete
-- [ ] Step 3: Shipping method selection (standard, express, pickup, assembly)
-- [ ] Step 4: Payment method selection (card, PayPal, Klarna, bank transfer, Apple/Google Pay)
-- [ ] Step 5: Order review and confirmation
+- [x] Create multi-step checkout form with progress indicator
+- [x] Step 1: Contact information (name, email, phone)
+- [x] Step 2: Delivery address with postal code autocomplete
+- [x] Step 3: Shipping method selection (standard, express, pickup, assembly)
+- [x] Step 4: Payment method selection (card, PayPal, Klarna, bank transfer, Apple/Google Pay)
+- [x] Step 5: Order review and confirmation
 - [ ] Implement order creation and confirmation page
 - [ ] Add order confirmation email template
 
 ## Phase 5: User Account System
-- [ ] Create user profile page
-- [ ] Implement order history with tracking
-- [ ] Add saved addresses management
-- [ ] Create wishlist/favorites functionality
+- [x] Create user profile page
+- [x] Implement order history with tracking
+- [x] Add saved addresses management
+- [x] Create wishlist/favorites functionality
 - [ ] Build loyalty program / bonus points system
 - [ ] Add newsletter subscription management
-- [ ] Implement account settings and preferences
+- [x] Implement account settings and preferences
 
 ## Phase 6: Admin Panel
-- [ ] Create admin dashboard with key metrics
+- [x] Create admin dashboard with key metrics
 - [ ] Build product management (CRUD operations)
 - [ ] Implement bulk product import/export (CSV, XML)
 - [ ] Create order management with status tracking
 - [ ] Add customer database and segmentation
 - [ ] Build analytics dashboard with sales graphs
 - [ ] Implement 2FA for admin security
-- [ ] Add role-based access control (admin, manager, content manager)
+- [x] Add role-based access control (admin, manager, content manager)
 - [ ] Create admin activity logging
 
 ## Phase 7: Marketing & Trust Features

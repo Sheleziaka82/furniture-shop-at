@@ -10,6 +10,9 @@ import Home from "./pages/Home";
 import Catalog from "./pages/Catalog";
 import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
+import Checkout from "./pages/Checkout";
+import Account from "./pages/Account";
+import AdminDashboard from "./pages/AdminDashboard";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -19,6 +22,9 @@ function Router() {
       <Route path={"/catalog"} component={Catalog} />
       <Route path={"/product/:id"} component={ProductDetail} />
       <Route path={"/cart"} component={Cart} />
+      <Route path={"/checkout"} component={Checkout} />
+      <Route path={"/account"} component={Account} />
+      <Route path={"/admin"} component={AdminDashboard} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
