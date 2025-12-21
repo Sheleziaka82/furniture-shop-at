@@ -1,6 +1,20 @@
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
+import {
+  InsertUser,
+  users,
+  categories,
+  products,
+  productImages,
+  productVariants,
+  cartItems,
+  orders,
+  orderItems,
+  wishlistItems,
+  userAddresses,
+  reviews,
+  loyaltyPoints,
+} from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -89,4 +103,144 @@ export async function getUserByOpenId(openId: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
-// TODO: add feature queries here as your schema grows.
+export async function getUserById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(users).where(eq(users.id, id)).limit(1);
+  return result[0];
+}
+
+// Product queries
+export async function getCategories() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(categories);
+}
+
+export async function getProductsByCategory(categoryId: number, limit = 20, offset = 0) {
+  const db = await getDb();
+  if (!db) return { products: [], total: 0 };
+  const result = await db
+    .select()
+    .from(products)
+    .where(eq(products.categoryId, categoryId))
+    .limit(limit)
+    .offset(offset);
+  return { products: result, total: result.length };
+}
+
+export async function getProductBySlug(slug: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db
+    .select()
+    .from(products)
+    .where(eq(products.slug, slug))
+    .limit(1);
+  return result[0];
+}
+
+export async function getProductById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db
+    .select()
+    .from(products)
+    .where(eq(products.id, id))
+    .limit(1);
+  return result[0];
+}
+
+export async function getProductImages(productId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db
+    .select()
+    .from(productImages)
+    .where(eq(productImages.productId, productId))
+    .orderBy(productImages.displayOrder);
+}
+
+export async function getProductVariants(productId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db
+    .select()
+    .from(productVariants)
+    .where(eq(productVariants.productId, productId));
+}
+
+// Cart queries
+export async function getUserCart(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(cartItems).where(eq(cartItems.userId, userId));
+}
+
+export async function addToCart(userId: number, productId: number, variantId: number | undefined, quantity: number) {
+  const db = await getDb();
+  if (!db) return null;
+  const result = await db.insert(cartItems).values({
+    userId,
+    productId,
+    variantId,
+    quantity,
+  });
+  return result;
+}
+
+export async function removeFromCart(cartItemId: number) {
+  const db = await getDb();
+  if (!db) return false;
+  await db.delete(cartItems).where(eq(cartItems.id, cartItemId));
+  return true;
+}
+
+// Order queries
+export async function getUserOrders(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(orders).where(eq(orders.userId, userId)).orderBy(orders.createdAt);
+}
+
+export async function getOrderById(orderId: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(orders).where(eq(orders.id, orderId)).limit(1);
+  return result[0];
+}
+
+export async function getOrderItems(orderId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(orderItems).where(eq(orderItems.orderId, orderId));
+}
+
+// Wishlist queries
+export async function getUserWishlist(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(wishlistItems).where(eq(wishlistItems.userId, userId));
+}
+
+// Address queries
+export async function getUserAddresses(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(userAddresses).where(eq(userAddresses.userId, userId));
+}
+
+// Review queries
+export async function getProductReviews(productId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(reviews).where(eq(reviews.productId, productId));
+}
+
+// Loyalty points
+export async function getUserLoyaltyPoints(userId: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(loyaltyPoints).where(eq(loyaltyPoints.userId, userId)).limit(1);
+  return result[0];
+}
