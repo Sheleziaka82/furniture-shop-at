@@ -6,6 +6,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { CartProvider } from "./contexts/CartContext";
+import { ComparisonProvider } from "./contexts/ComparisonContext";
 import Home from "./pages/Home";
 import Catalog from "./pages/Catalog";
 import ProductDetail from "./pages/ProductDetail";
@@ -16,6 +17,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import AbandonedCart from "./pages/AbandonedCart";
 import Legal from "./pages/Legal";
 import Contact from "./pages/Contact";
+import Comparison from "./pages/Comparison";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -31,6 +33,7 @@ function Router() {
       <Route path={"/abandoned-cart"} component={AbandonedCart} />
       <Route path={"/legal"} component={Legal} />
       <Route path={"/contact"} component={Contact} />
+      <Route path={"/comparison"} component={Comparison} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
@@ -43,21 +46,24 @@ function Router() {
 //   to keep consistent foreground/background color across components
 // - If you want to make theme switchable, pass `switchable` ThemeProvider and use `useTheme` hook
 
-function App() {
-  return (
+function App() {  return (
     <ErrorBoundary>
-      <ThemeProvider defaultTheme="light" switchable>
-        <LanguageProvider defaultLanguage="de-AT">
+      <ThemeProvider
+        defaultTheme="light"
+        // switchable
+      >
+        <LanguageProvider>
           <CartProvider>
-            <TooltipProvider>
-              <Toaster />
-              <Router />
-            </TooltipProvider>
+            <ComparisonProvider>
+              <TooltipProvider>
+                <Toaster />
+                <Router />
+              </TooltipProvider>
+            </ComparisonProvider>
           </CartProvider>
         </LanguageProvider>
       </ThemeProvider>
     </ErrorBoundary>
-  );
-}
+  );}
 
 export default App;
