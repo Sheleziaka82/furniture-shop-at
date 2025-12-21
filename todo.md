@@ -61,14 +61,14 @@
 - [ ] Create admin activity logging
 
 ## Phase 7: Marketing & Trust Features
-- [ ] Implement customer reviews with photo uploads
-- [ ] Add review rating system and display
+- [x] Implement customer reviews with photo uploads
+- [x] Add review rating system and display
 - [ ] Create trust badges (certifications, guarantees)
 - [ ] Add stock level indicators (urgency)
 - [ ] Implement "people viewing this product" counter
-- [ ] Create "frequently bought together" recommendations
-- [ ] Add personalized product recommendations
-- [ ] Build abandoned cart recovery email system
+- [x] Create "frequently bought together" recommendations
+- [x] Add personalized product recommendations
+- [x] Build abandoned cart recovery email system
 - [ ] Implement referral program
 
 ## Phase 8: SEO & Performance
@@ -82,10 +82,10 @@
 
 ## Phase 9: Legal & Compliance
 - [ ] Create GDPR-compliant cookie banner
-- [ ] Add privacy policy (Datenschutzerklärung)
-- [ ] Add terms of service (AGB)
-- [ ] Add return policy (Widerrufsrecht)
-- [ ] Add company information (Impressum)
+- [x] Add privacy policy (Datenschutzerklärung)
+- [x] Add terms of service (AGB)
+- [x] Add return policy (Widerrufsrecht)
+- [x] Add company information (Impressum)
 - [ ] Implement SSL/HTTPS enforcement
 
 ## Phase 10: Testing & Deployment
