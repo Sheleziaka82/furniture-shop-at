@@ -63,7 +63,7 @@
 ## Phase 7: Marketing & Trust Features
 - [x] Implement customer reviews with photo uploads
 - [x] Add review rating system and display
-- [ ] Create trust badges (certifications, guarantees)
+- [x] Create trust badges (certifications, guarantees)
 - [ ] Add stock level indicators (urgency)
 - [ ] Implement "people viewing this product" counter
 - [x] Create "frequently bought together" recommendations
@@ -86,7 +86,10 @@
 - [x] Add terms of service (AGB)
 - [x] Add return policy (Widerrufsrecht)
 - [x] Add company information (Impressum)
-- [ ] Implement SSL/HTTPS enforcement
+- [x] Implement SSL/HTTPS enforcement
+- [x] Add newsletter signup component
+- [x] Create contact page with contact form
+- [x] Add trust badges component
 
 ## Phase 10: Testing & Deployment
 - [ ] Write unit tests for core features

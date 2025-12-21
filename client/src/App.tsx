@@ -15,6 +15,7 @@ import Account from "./pages/Account";
 import AdminDashboard from "./pages/AdminDashboard";
 import AbandonedCart from "./pages/AbandonedCart";
 import Legal from "./pages/Legal";
+import Contact from "./pages/Contact";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -29,6 +30,7 @@ function Router() {
       <Route path={"/admin"} component={AdminDashboard} />
       <Route path={"/abandoned-cart"} component={AbandonedCart} />
       <Route path={"/legal"} component={Legal} />
+      <Route path={"/contact"} component={Contact} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
