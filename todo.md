@@ -11,24 +11,24 @@
 ## Phase 2: Product Catalog
 - [x] Create database schema for products, categories, attributes
 - [x] Implement tRPC procedures for product browsing
-- [ ] Implement product listing page with grid/list view toggle
-- [ ] Add filtering by price, color, material, style
-- [ ] Add sorting by popularity, price, newest, rating
+- [x] Implement product listing page with grid/list view toggle
+- [x] Add filtering by price, color, material, style
+- [x] Add sorting by popularity, price, newest, rating
 - [ ] Implement pagination or infinite scroll
 - [ ] Add search functionality with autocomplete
-- [ ] Create product cards with hover effects and quick view
+- [x] Create product cards with hover effects and quick view
 
 ## Phase 3: Product Details & Shopping Cart
-- [ ] Build product detail page with image gallery and zoom
+- [x] Build product detail page with image gallery and zoom
 - [ ] Implement 360-degree view functionality
-- [ ] Add color variant selector with visual indicators
-- [ ] Display stock status and urgency indicators
-- [ ] Create "Add to Cart" functionality
-- [ ] Build cart context for state management
+- [x] Add color variant selector with visual indicators
+- [x] Display stock status and urgency indicators
+- [x] Create "Add to Cart" functionality
+- [x] Build cart context for state management
 - [ ] Implement slide-in cart panel
-- [ ] Create full cart page with quantity editing and removal
-- [ ] Add promo code/coupon functionality
-- [ ] Implement delivery cost calculator
+- [x] Create full cart page with quantity editing and removal
+- [x] Add promo code/coupon functionality
+- [x] Implement delivery cost calculator
 
 ## Phase 4: Checkout & Payment
 - [ ] Create multi-step checkout form with progress indicator
