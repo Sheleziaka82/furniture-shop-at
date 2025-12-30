@@ -5,6 +5,7 @@ import { useAuth } from '@/_core/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Link } from 'wouter';
 import { ProductForm, type ProductFormData } from '@/components/ProductForm';
+import { UserManagement } from '@/components/UserManagement';
 import {
   BarChart3,
   Package,
@@ -15,11 +16,12 @@ import {
   ShoppingCart,
   AlertCircle,
   ArrowLeft,
+  UserPlus,
 } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
-type AdminTab = 'dashboard' | 'products' | 'orders' | 'customers' | 'settings';
+type AdminTab = 'dashboard' | 'products' | 'orders' | 'customers' | 'settings' | 'users';
 type ProductsSubTab = 'list' | 'add';
 
 export default function AdminDashboard() {
@@ -203,6 +205,20 @@ export default function AdminDashboard() {
                   </button>
                   <button
                     onClick={() => {
+                      setActiveTab('users');
+                      setProductsSubTab('list');
+                    }}
+                    className={`flex items-center gap-3 px-6 py-4 border-b border-border transition-colors ${
+                      activeTab === 'users'
+                        ? 'bg-primary text-primary-foreground'
+                        : 'text-foreground hover:bg-muted'
+                    }`}
+                  >
+                    <UserPlus className="w-5 h-5" />
+                    <span className="font-semibold">Пользователи</span>
+                  </button>
+                  <button
+                    onClick={() => {
                       setActiveTab('settings');
                       setProductsSubTab('list');
                     }}
@@ -360,6 +376,13 @@ export default function AdminDashboard() {
                   <p className="text-muted-foreground">
                     Kundenverwaltungsbereich wird hier angezeigt
                   </p>
+                </div>
+              )}
+
+              {/* Users Tab */}
+              {activeTab === 'users' && (
+                <div>
+                  <UserManagement />
                 </div>
               )}
 
