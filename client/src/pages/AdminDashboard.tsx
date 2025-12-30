@@ -4,6 +4,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Link } from 'wouter';
+import { ProductForm, type ProductFormData } from '@/components/ProductForm';
 import {
   BarChart3,
   Package,
@@ -13,16 +14,20 @@ import {
   LogOut,
   ShoppingCart,
   AlertCircle,
+  ArrowLeft,
 } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
 type AdminTab = 'dashboard' | 'products' | 'orders' | 'customers' | 'settings';
+type ProductsSubTab = 'list' | 'add';
 
 export default function AdminDashboard() {
   const { t } = useLanguage();
   const { user, logout } = useAuth();
   const [activeTab, setActiveTab] = useState<AdminTab>('dashboard');
+  const [productsSubTab, setProductsSubTab] = useState<ProductsSubTab>('list');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Check if user is admin
   if (user?.role !== 'admin') {
@@ -103,6 +108,22 @@ export default function AdminDashboard() {
     toast.success('Sie wurden abgemeldet');
   };
 
+  const handleAddProduct = async (data: ProductFormData) => {
+    setIsSubmitting(true);
+    try {
+      // Hier würde der API-Aufruf stattfinden
+      // await trpc.products.create.useMutation(data);
+      console.log('Produkt hinzufügen:', data);
+      toast.success('Produkt erfolgreich hinzugefügt');
+      setProductsSubTab('list');
+    } catch (error) {
+      console.error(error);
+      toast.error('Fehler beim Hinzufügen des Produkts');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-muted">
       <Header />
@@ -128,7 +149,10 @@ export default function AdminDashboard() {
               <div className="bg-card border border-border rounded-lg overflow-hidden sticky top-24">
                 <nav className="flex flex-col">
                   <button
-                    onClick={() => setActiveTab('dashboard')}
+                    onClick={() => {
+                      setActiveTab('dashboard');
+                      setProductsSubTab('list');
+                    }}
                     className={`flex items-center gap-3 px-6 py-4 border-b border-border transition-colors ${
                       activeTab === 'dashboard'
                         ? 'bg-primary text-primary-foreground'
@@ -150,7 +174,10 @@ export default function AdminDashboard() {
                     <span className="font-semibold">Produkte</span>
                   </button>
                   <button
-                    onClick={() => setActiveTab('orders')}
+                    onClick={() => {
+                      setActiveTab('orders');
+                      setProductsSubTab('list');
+                    }}
                     className={`flex items-center gap-3 px-6 py-4 border-b border-border transition-colors ${
                       activeTab === 'orders'
                         ? 'bg-primary text-primary-foreground'
@@ -161,7 +188,10 @@ export default function AdminDashboard() {
                     <span className="font-semibold">Bestellungen</span>
                   </button>
                   <button
-                    onClick={() => setActiveTab('customers')}
+                    onClick={() => {
+                      setActiveTab('customers');
+                      setProductsSubTab('list');
+                    }}
                     className={`flex items-center gap-3 px-6 py-4 border-b border-border transition-colors ${
                       activeTab === 'customers'
                         ? 'bg-primary text-primary-foreground'
@@ -172,7 +202,10 @@ export default function AdminDashboard() {
                     <span className="font-semibold">Kunden</span>
                   </button>
                   <button
-                    onClick={() => setActiveTab('settings')}
+                    onClick={() => {
+                      setActiveTab('settings');
+                      setProductsSubTab('list');
+                    }}
                     className={`flex items-center gap-3 px-6 py-4 transition-colors ${
                       activeTab === 'settings'
                         ? 'bg-primary text-primary-foreground'
@@ -278,14 +311,35 @@ export default function AdminDashboard() {
 
               {/* Products Tab */}
               {activeTab === 'products' && (
-                <div className="bg-card border border-border rounded-lg p-6">
-                  <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-xl font-bold">Produktverwaltung</h2>
-                    <Button>Neues Produkt</Button>
-                  </div>
-                  <p className="text-muted-foreground">
-                    Produktverwaltungsbereich wird hier angezeigt
-                  </p>
+                <div>
+                  {productsSubTab === 'list' ? (
+                    <div className="bg-card border border-border rounded-lg p-6">
+                      <div className="flex items-center justify-between mb-6">
+                        <h2 className="text-xl font-bold">Produktverwaltung</h2>
+                        <Button onClick={() => setProductsSubTab('add')}>
+                          + Neues Produkt
+                        </Button>
+                      </div>
+                      <p className="text-muted-foreground">
+                        Produktliste wird hier angezeigt (in Entwicklung)
+                      </p>
+                    </div>
+                  ) : (
+                    <div>
+                      <button
+                        onClick={() => setProductsSubTab('list')}
+                        className="flex items-center gap-2 text-primary hover:text-primary/80 mb-6"
+                      >
+                        <ArrowLeft className="w-4 h-4" />
+                        Zurück zur Liste
+                      </button>
+                      <ProductForm
+                        onSubmit={handleAddProduct}
+                        onCancel={() => setProductsSubTab('list')}
+                        isLoading={isSubmitting}
+                      />
+                    </div>
+                  )}
                 </div>
               )}
 
