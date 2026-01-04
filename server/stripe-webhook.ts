@@ -4,6 +4,7 @@ import { ENV } from "./_core/env";
 import { getDb } from "./db";
 import { orders, users } from "../drizzle/schema";
 import { eq } from "drizzle-orm";
+import { sendOrderConfirmationEmail } from "./email-service";
 
 const stripe = new Stripe(ENV.stripeSecretKey, {
   apiVersion: '2025-12-15.clover',
@@ -112,6 +113,65 @@ export async function handleStripeWebhook(req: Request, res: Response) {
           });
 
           console.log(`[Webhook] Created order ${orderNumber} for user ${userId}`);
+
+          // Send order confirmation email
+          try {
+            // Retrieve line items from session
+            const lineItems = await stripe.checkout.sessions.listLineItems(session.id, {
+              expand: ['data.price.product'],
+            });
+
+            const items = lineItems.data.map(item => ({
+              productName: (item.description || 'Product'),
+              price: item.amount_total,
+              quantity: item.quantity || 1,
+            }));
+
+            // Calculate shipping cost (last item if it's shipping)
+            let shippingCost = 0;
+            const lastItem = items[items.length - 1];
+            if (lastItem && (lastItem.productName.includes('Versand') || lastItem.productName.includes('Shipping') || lastItem.productName.includes('Lieferung'))) {
+              shippingCost = lastItem.price;
+              items.pop(); // Remove shipping from items list
+            }
+
+            const subtotal = items.reduce((sum, item) => sum + item.price, 0);
+
+            // Determine language from metadata or default to German
+            const language = session.metadata?.language === 'en' ? 'en' : 'de';
+
+            // Format shipping address
+            const shippingDetails = (session as any).shipping_details;
+            let shippingAddress = '';
+            if (shippingDetails && shippingDetails.address) {
+              const addr = shippingDetails.address;
+              shippingAddress = `${shippingDetails.name || customerName || ''}
+${addr.line1 || ''}
+${addr.line2 || ''}
+${addr.postal_code || ''} ${addr.city || ''}
+${addr.country || ''}`;
+            } else {
+              shippingAddress = customerName || '';
+            }
+
+            await sendOrderConfirmationEmail({
+              orderNumber,
+              customerName: customerName || 'Kunde',
+              customerEmail: customerEmail || '',
+              items,
+              subtotal,
+              shippingCost,
+              total: session.amount_total || 0,
+              shippingMethod: shippingMethod || 'standard',
+              shippingAddress: shippingAddress.trim(),
+              language,
+            });
+
+            console.log(`[Webhook] Order confirmation email sent to ${customerEmail}`);
+          } catch (emailError) {
+            console.error("[Webhook] Error sending order confirmation email:", emailError);
+            // Don't fail the webhook if email fails
+          }
         } catch (error) {
           console.error("[Webhook] Error creating order:", error);
           return res.status(500).send('Error creating order');

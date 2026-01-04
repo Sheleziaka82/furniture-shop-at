@@ -134,3 +134,14 @@
 - [ ] Add payment history page for user account
 - [ ] Test payment flow with Stripe test cards
 - [ ] Configure webhook in Stripe dashboard
+
+
+## Phase 14: Email Notification System
+- [x] Create email service helper using Manus Notification API
+- [x] Design HTML email template for order confirmation (German)
+- [x] Design HTML email template for order confirmation (English)
+- [x] Integrate email sending into Stripe webhook on payment success
+- [x] Add order details, items, and shipping info to email
+- [x] Test email template generation with unit tests
+- [ ] Test email delivery with real orders
+- [ ] Add email notification for order status updates
