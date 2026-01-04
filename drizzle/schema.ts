@@ -20,6 +20,7 @@ export const users = mysqlTable("users", {
   permissions: text("permissions"), // JSON string of permissions
   department: varchar("department", { length: 255 }), // e.g., "Sales", "Support", "Warehouse"
   isActive: boolean("isActive").default(true).notNull(),
+  stripeCustomerId: varchar("stripeCustomerId", { length: 255 }), // Stripe customer ID for payment processing
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
@@ -107,6 +108,8 @@ export const orders = mysqlTable("orders", {
   billingAddress: text("billingAddress"),
   trackingNumber: varchar("trackingNumber", { length: 255 }),
   notes: text("notes"),
+  stripePaymentIntentId: varchar("stripePaymentIntentId", { length: 255 }), // Stripe payment intent ID
+  stripeCheckoutSessionId: varchar("stripeCheckoutSessionId", { length: 255 }), // Stripe checkout session ID
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });

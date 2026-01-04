@@ -4,10 +4,11 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useCart } from '@/contexts/CartContext';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/_core/hooks/useAuth';
-import { Link } from 'wouter';
+import { Link, useLocation } from 'wouter';
 import { ChevronRight, Lock } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { trpc } from '@/lib/trpc';
 
 type CheckoutStep = 'contact' | 'address' | 'shipping' | 'payment' | 'review';
 
@@ -71,10 +72,55 @@ export default function Checkout() {
     }
   };
 
-  const handlePlaceOrder = () => {
-    toast.success('Bestellung erfolgreich aufgegeben!');
-    // Redirect to order confirmation
-    // navigate('/order-confirmation');
+  const [, setLocation] = useLocation();
+  const createCheckoutSession = trpc.stripe.createCheckoutSession.useMutation();
+
+  const handlePlaceOrder = async () => {
+    if (!isAuthenticated) {
+      toast.error(t('auth.loginRequired'));
+      return;
+    }
+
+    // Validate all fields
+    if (!contact.email || !contact.firstName || !contact.phone) {
+      toast.error('Bitte füllen Sie alle Kontaktfelder aus');
+      setCurrentStep('contact');
+      return;
+    }
+
+    if (!address.street || !address.postalCode || !address.city) {
+      toast.error('Bitte füllen Sie alle Adressfelder aus');
+      setCurrentStep('address');
+      return;
+    }
+
+    try {
+      // Prepare cart items for Stripe
+      const cartItems = items.map(item => ({
+        productName: item.productName,
+        productDescription: undefined,
+        productImage: item.imageUrl || undefined,
+        price: item.price, // already in cents
+        quantity: item.quantity,
+      }));
+
+      // Create Stripe checkout session
+      const result = await createCheckoutSession.mutateAsync({
+        cartItems,
+        shippingMethod: shipping.method as 'standard' | 'express' | 'pickup' | 'assembly',
+        promoCode: undefined,
+        discountAmount: 0,
+      });
+
+      if (result.url) {
+        // Show toast and redirect to Stripe checkout
+        toast.info('Sie werden zur Zahlungsseite weitergeleitet...');
+        window.open(result.url, '_blank');
+      }
+    } catch (error: any) {
+      console.error('Checkout error:', error);
+      toast.error('Fehler beim Erstellen der Zahlung. Bitte versuchen Sie es erneut.');
+    }
   };
 
   return (

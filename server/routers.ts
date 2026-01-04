@@ -3,6 +3,9 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router, protectedProcedure } from "./_core/trpc";
 import { z } from "zod";
+import Stripe from "stripe";
+import { ENV } from "./_core/env";
+import { createStripeLineItems, createShippingLineItem } from "./stripe-products";
 import {
   getCategories,
   getProductsByCategory,
@@ -127,6 +130,73 @@ export const appRouter = router({
         }
         const items = await getOrderItems(input);
         return { ...order, items };
+      }),
+  }),
+
+  // Stripe payment routes
+  stripe: router({
+    createCheckoutSession: protectedProcedure
+      .input(z.object({
+        cartItems: z.array(z.object({
+          productName: z.string(),
+          productDescription: z.string().optional(),
+          productImage: z.string().optional(),
+          price: z.number(), // in cents
+          quantity: z.number(),
+        })),
+        shippingMethod: z.enum(['standard', 'express', 'pickup', 'assembly']),
+        promoCode: z.string().optional(),
+        discountAmount: z.number().optional().default(0),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const stripe = new Stripe(ENV.stripeSecretKey, {
+          apiVersion: '2025-12-15.clover',
+        });
+
+        // Create line items from cart
+        const lineItems = createStripeLineItems(input.cartItems);
+
+        // Add shipping if applicable
+        const shippingLineItem = createShippingLineItem(input.shippingMethod);
+        if (shippingLineItem) {
+          lineItems.push(shippingLineItem);
+        }
+
+        // Create checkout session
+        const session = await stripe.checkout.sessions.create({
+          payment_method_types: ['card'],
+          line_items: lineItems,
+          mode: 'payment',
+          customer_email: ctx.user.email || undefined,
+          client_reference_id: ctx.user.id.toString(),
+          metadata: {
+            user_id: ctx.user.id.toString(),
+            customer_email: ctx.user.email || '',
+            customer_name: ctx.user.name || '',
+            shipping_method: input.shippingMethod,
+            promo_code: input.promoCode || '',
+            discount_amount: input.discountAmount.toString(),
+          },
+          success_url: `${ctx.req.headers.origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+          cancel_url: `${ctx.req.headers.origin}/checkout`,
+          allow_promotion_codes: true,
+        });
+
+        return {
+          sessionId: session.id,
+          url: session.url,
+        };
+      }),
+
+    getSession: protectedProcedure
+      .input(z.string())
+      .query(async ({ input }) => {
+        const stripe = new Stripe(ENV.stripeSecretKey, {
+          apiVersion: '2025-12-15.clover',
+        });
+
+        const session = await stripe.checkout.sessions.retrieve(input);
+        return session;
       }),
   }),
 });

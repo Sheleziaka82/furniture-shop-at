@@ -18,6 +18,7 @@ import AbandonedCart from "./pages/AbandonedCart";
 import Legal from "./pages/Legal";
 import Contact from "./pages/Contact";
 import Comparison from "./pages/Comparison";
+import CheckoutSuccess from "./pages/CheckoutSuccess";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -28,6 +29,7 @@ function Router() {
       <Route path={"/product/:id"} component={ProductDetail} />
       <Route path={"/cart"} component={Cart} />
       <Route path={"/checkout"} component={Checkout} />
+      <Route path={"/checkout/success"} component={CheckoutSuccess} />
       <Route path={"/account"} component={Account} />
       <Route path={"/admin"} component={AdminDashboard} />
       <Route path={"/abandoned-cart"} component={AbandonedCart} />

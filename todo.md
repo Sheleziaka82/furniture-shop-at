@@ -122,3 +122,15 @@
 - [ ] Add user activity logging
 - [ ] Implement 2FA for admin users
 - [ ] Create user invitation/registration system
+
+
+## Phase 13: Stripe Payment Integration
+- [x] Update database schema to store Stripe customer IDs and payment intent IDs
+- [x] Create Stripe products configuration file
+- [x] Implement tRPC procedure for creating Stripe checkout sessions
+- [x] Create webhook endpoint at /api/stripe/webhook for payment confirmation
+- [x] Integrate Stripe checkout into multi-step checkout flow
+- [x] Add payment success page with order confirmation
+- [ ] Add payment history page for user account
+- [ ] Test payment flow with Stripe test cards
+- [ ] Configure webhook in Stripe dashboard
