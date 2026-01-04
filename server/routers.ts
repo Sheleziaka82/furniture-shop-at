@@ -22,7 +22,11 @@ import {
   getUserOrders,
   getOrderById,
   getOrderItems,
+  getDb,
 } from "./db";
+import { orders } from "../drizzle/schema";
+import { eq } from "drizzle-orm";
+import { sendShippingNotificationEmail } from "./email-service";
 
 export const appRouter = router({
   system: systemRouter,
@@ -130,6 +134,84 @@ export const appRouter = router({
         }
         const items = await getOrderItems(input);
         return { ...order, items };
+      }),
+    
+    // Admin: Mark order as shipped and send notification
+    markAsShipped: protectedProcedure
+      .input(z.object({
+        orderId: z.number(),
+        trackingNumber: z.string().min(1),
+        carrier: z.enum(['DHL', 'DPD', 'Austrian Post', 'Post', 'GLS', 'Other']),
+        estimatedDelivery: z.string().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        // Check if user is admin
+        if (ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Admin access required');
+        }
+
+        const db = await getDb();
+        if (!db) {
+          throw new Error('Database not available');
+        }
+
+        // Get order details
+        const order = await getOrderById(input.orderId);
+        if (!order) {
+          throw new Error('Order not found');
+        }
+
+        // Update order status and tracking info
+        await db.update(orders)
+          .set({
+            status: 'shipped',
+            trackingNumber: input.trackingNumber,
+            carrier: input.carrier,
+            estimatedDelivery: input.estimatedDelivery || null,
+          })
+          .where(eq(orders.id, input.orderId));
+
+        // Parse shipping address to get customer name
+        let customerName = 'Kunde';
+        try {
+          const shippingDetails = JSON.parse(order.shippingAddress);
+          if (shippingDetails.name) {
+            customerName = shippingDetails.name;
+          } else if (shippingDetails.address && shippingDetails.address.line1) {
+            // Try to extract name from address
+            customerName = shippingDetails.address.line1.split('\n')[0] || 'Kunde';
+          }
+        } catch (e) {
+          // If parsing fails, try to extract first line as name
+          const lines = order.shippingAddress.split('\n');
+          if (lines.length > 0) {
+            customerName = lines[0];
+          }
+        }
+
+        // Send shipping notification email
+        try {
+          await sendShippingNotificationEmail({
+            orderNumber: order.orderNumber,
+            customerName,
+            customerEmail: order.customerEmail,
+            trackingNumber: input.trackingNumber,
+            carrier: input.carrier,
+            estimatedDelivery: input.estimatedDelivery,
+            shippingMethod: order.shippingMethod || 'standard',
+            language: 'de', // Default to German, can be enhanced to detect from order metadata
+          });
+
+          console.log(`[Orders] Shipping notification sent for order ${order.orderNumber}`);
+        } catch (emailError) {
+          console.error('[Orders] Failed to send shipping notification:', emailError);
+          // Don't fail the mutation if email fails
+        }
+
+        return {
+          success: true,
+          message: 'Order marked as shipped and notification sent',
+        };
       }),
   }),
 

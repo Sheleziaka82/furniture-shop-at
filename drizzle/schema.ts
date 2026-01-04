@@ -107,6 +107,8 @@ export const orders = mysqlTable("orders", {
   shippingAddress: text("shippingAddress").notNull(),
   billingAddress: text("billingAddress"),
   trackingNumber: varchar("trackingNumber", { length: 255 }),
+  carrier: varchar("carrier", { length: 255 }), // DHL, DPD, Austrian Post, GLS
+  estimatedDelivery: varchar("estimatedDelivery", { length: 255 }), // Estimated delivery date
   notes: text("notes"),
   stripePaymentIntentId: varchar("stripePaymentIntentId", { length: 255 }), // Stripe payment intent ID
   stripeCheckoutSessionId: varchar("stripeCheckoutSessionId", { length: 255 }), // Stripe checkout session ID

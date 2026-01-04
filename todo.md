@@ -145,3 +145,15 @@
 - [x] Test email template generation with unit tests
 - [ ] Test email delivery with real orders
 - [ ] Add email notification for order status updates
+
+
+## Phase 15: Shipping Notification System
+- [x] Create HTML email template for shipping notification (German)
+- [x] Create HTML email template for shipping notification (English)
+- [x] Add tracking number and carrier information to email
+- [x] Implement tRPC procedure for updating order status to 'shipped'
+- [x] Integrate automatic email sending when order is marked as shipped
+- [x] Add tracking URL generation for common carriers (DHL, DPD, Austrian Post, GLS)
+- [x] Test shipping notification with unit tests
+- [x] Add carrier and estimatedDelivery fields to orders table
+- [ ] Add UI in admin dashboard for marking orders as shipped
