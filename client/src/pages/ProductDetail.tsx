@@ -14,42 +14,30 @@ export default function ProductDetail() {
   const params = useParams();
   const productId = parseInt(params.id || '0');
 
-  // Mock product data
+  // Mock product data removed - use API data
   const product = {
     id: productId,
-    name: 'Modernes Sofa Premium',
-    price: 1299,
-    originalPrice: 1599,
-    rating: 4.5,
-    reviews: 24,
-    description: 'Ein luxuriöses, modernes Sofa mit hochwertigen Materialien und ergonomischem Design. Perfekt für jeden modernen Wohnraum.',
-    material: 'Hochwertiger Stoff',
-    dimensions: '220 x 90 x 85 cm',
-    weight: '65 kg',
-    color: 'Grau',
-    style: 'Modern',
-    stock: 12,
-    isBestseller: true,
+    name: '',
+    price: 0,
+    originalPrice: 0,
+    rating: 0,
+    reviews: 0,
+    description: '',
+    material: '',
+    dimensions: '',
+    weight: '',
+    color: '',
+    style: '',
+    stock: 0,
+    isBestseller: false,
     isNew: false,
-    images: [
-      'https://via.placeholder.com/600x600?text=Sofa+Front',
-      'https://via.placeholder.com/600x600?text=Sofa+Side',
-      'https://via.placeholder.com/600x600?text=Sofa+Detail',
-      'https://via.placeholder.com/600x600?text=Sofa+Room',
-    ],
-    variants: [
-      { id: 1, color: 'Grau', colorCode: '#808080', stock: 12 },
-      { id: 2, color: 'Beige', colorCode: '#F5F5DC', stock: 8 },
-      { id: 3, color: 'Dunkelgrau', colorCode: '#404040', stock: 5 },
-    ],
-    reviews_data: [
-      { author: 'Maria K.', rating: 5, text: 'Sehr gutes Sofa, sehr bequem!', verified: true },
-      { author: 'Hans M.', rating: 4, text: 'Gute Qualität, schnelle Lieferung', verified: true },
-    ],
+    images: [],
+    variants: [],
+    reviews_data: [],
   };
 
   const [selectedImage, setSelectedImage] = useState(0);
-  const [selectedVariant, setSelectedVariant] = useState(product.variants[0]);
+  const [selectedVariant, setSelectedVariant] = useState<any>(null);
   const [quantity, setQuantity] = useState(1);
   const [isWishlisted, setIsWishlisted] = useState(false);
 
@@ -191,15 +179,16 @@ export default function ProductDetail() {
               </div>
 
               {/* Color Variants */}
+              {product.variants && product.variants.length > 0 && (
               <div className="mb-8">
                 <h3 className="font-semibold mb-4">{t('product.color')}</h3>
                 <div className="flex gap-4">
-                  {product.variants.map((variant) => (
+                  {product.variants.map((variant: any) => (
                     <button
                       key={variant.id}
                       onClick={() => setSelectedVariant(variant)}
                       className={`w-12 h-12 rounded-lg border-2 transition-colors ${
-                        selectedVariant.id === variant.id
+                        selectedVariant?.id === variant.id
                           ? 'border-primary'
                           : 'border-border hover:border-primary/50'
                       }`}
@@ -208,8 +197,11 @@ export default function ProductDetail() {
                     />
                   ))}
                 </div>
+                {selectedVariant && (
                 <p className="text-sm text-muted-foreground mt-2">{selectedVariant.color}</p>
+                )}
               </div>
+              )}
 
               {/* Quantity */}
               <div className="mb-8">
@@ -272,10 +264,11 @@ export default function ProductDetail() {
               </div>
 
               {/* Reviews Preview */}
+              {product.reviews_data && product.reviews_data.length > 0 && (
               <div className="mt-8">
                 <h3 className="font-semibold mb-4">{t('product.reviews')}</h3>
                 <div className="space-y-4">
-                  {product.reviews_data.map((review, index) => (
+                  {product.reviews_data.map((review: any, index) => (
                     <div key={index} className="border-b border-border pb-4">
                       <div className="flex items-center justify-between mb-2">
                         <p className="font-semibold">{review.author}</p>
@@ -300,6 +293,7 @@ export default function ProductDetail() {
                   ))}
                 </div>
               </div>
+              )}
             </div>
           </div>
 

@@ -39,69 +39,12 @@ export default function Catalog() {
   // Using mock data for demo (replace with API data when ready)
   const isLoading = false;
 
-  // Mock product data for demo (replace with API data)
-  const mockProducts = [
-    {
-      id: 1,
-      name: 'Modernes Sofa',
-      price: 1299,
-      color: 'Grau',
-      material: 'Stoff',
-      style: 'Modern',
-      image: 'https://via.placeholder.com/300x300?text=Sofa',
-      rating: 4.5,
-      reviews: 24,
-      isBestseller: true,
-      isNew: false,
-      discount: 0,
-    },
-    {
-      id: 2,
-      name: 'Klassischer Sessel',
-      price: 599,
-      color: 'Beige',
-      material: 'Leder',
-      style: 'Klassisch',
-      image: 'https://via.placeholder.com/300x300?text=Sessel',
-      rating: 4.8,
-      reviews: 42,
-      isBestseller: false,
-      isNew: true,
-      discount: 10,
-    },
-    {
-      id: 3,
-      name: 'Skandinavischer Tisch',
-      price: 399,
-      color: 'Natur',
-      material: 'Holz',
-      style: 'Skandinavisch',
-      image: 'https://via.placeholder.com/300x300?text=Tisch',
-      rating: 4.6,
-      reviews: 18,
-      isBestseller: true,
-      isNew: false,
-      discount: 15,
-    },
-    {
-      id: 4,
-      name: 'Industrial Regal',
-      price: 299,
-      color: 'Schwarz',
-      material: 'Metall',
-      style: 'Industrial',
-      image: 'https://via.placeholder.com/300x300?text=Regal',
-      rating: 4.3,
-      reviews: 12,
-      isBestseller: false,
-      isNew: false,
-      discount: 0,
-    },
-  ];
+  // Mock product data removed - use API data
+  const mockProducts: any[] = [];
 
   // Filter and sort products
   const filteredProducts = useMemo(() => {
-    let products = mockProducts;
+    let products = mockProducts || [];
 
     // Price filter
     products = products.filter(

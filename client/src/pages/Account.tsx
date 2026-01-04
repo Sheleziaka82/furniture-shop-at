@@ -40,20 +40,7 @@ export default function Account() {
     },
   ];
 
-  const wishlist = [
-    {
-      id: 1,
-      name: 'Modernes Sofa Premium',
-      price: 1299,
-      image: 'https://via.placeholder.com/200x200?text=Sofa',
-    },
-    {
-      id: 2,
-      name: 'Skandinavischer Tisch',
-      price: 399,
-      image: 'https://via.placeholder.com/200x200?text=Tisch',
-    },
-  ];
+  const wishlist: any[] = [];
 
   const addresses = [
     {
