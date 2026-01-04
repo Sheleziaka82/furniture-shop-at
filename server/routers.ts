@@ -20,6 +20,7 @@ import {
   getUserCart,
   getUserAddresses,
   getUserOrders,
+  getAllOrders,
   getOrderById,
   getOrderItems,
   getDb,
@@ -124,6 +125,15 @@ export const appRouter = router({
   orders: router({
     getOrders: protectedProcedure.query(async ({ ctx }) => {
       return getUserOrders(ctx.user.id);
+    }),
+    
+    // Admin: Get all orders
+    getAllOrders: protectedProcedure.query(async ({ ctx }) => {
+      // Check if user is admin
+      if (ctx.user.role !== 'admin') {
+        throw new Error('Unauthorized: Admin access required');
+      }
+      return getAllOrders();
     }),
     getOrder: protectedProcedure
       .input(z.number())

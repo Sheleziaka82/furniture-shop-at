@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Link } from 'wouter';
 import { ProductForm, type ProductFormData } from '@/components/ProductForm';
 import { UserManagement } from '@/components/UserManagement';
+import AdminOrders from './AdminOrders';
 import {
   BarChart3,
   Package,
@@ -362,10 +363,7 @@ export default function AdminDashboard() {
               {/* Orders Tab */}
               {activeTab === 'orders' && (
                 <div className="bg-card border border-border rounded-lg p-6">
-                  <h2 className="text-xl font-bold mb-6">Bestellverwaltung</h2>
-                  <p className="text-muted-foreground">
-                    Bestellverwaltungsbereich wird hier angezeigt
-                  </p>
+                  <AdminOrders />
                 </div>
               )}
 

@@ -157,3 +157,17 @@
 - [x] Test shipping notification with unit tests
 - [x] Add carrier and estimatedDelivery fields to orders table
 - [ ] Add UI in admin dashboard for marking orders as shipped
+
+
+## Phase 16: Admin Orders Management UI
+- [x] Create admin orders list page with all orders
+- [x] Add status filter (all, processing, shipped, delivered, cancelled)
+- [x] Display order details (number, customer, total, date, status)
+- [x] Create shipping form dialog with tracking number input
+- [x] Add carrier dropdown (DHL, DPD, Austrian Post, GLS, Other)
+- [x] Add estimated delivery date picker
+- [x] Implement "Mark as Shipped" button with confirmation
+- [x] Show success/error notifications after shipping
+- [x] Add getAllOrders tRPC procedure for admin
+- [x] Integrate AdminOrders component into AdminDashboard
+- [ ] Add order details view with items list

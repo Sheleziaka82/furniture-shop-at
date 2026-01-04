@@ -203,6 +203,12 @@ export async function getUserOrders(userId: number) {
   return db.select().from(orders).where(eq(orders.userId, userId)).orderBy(orders.createdAt);
 }
 
+export async function getAllOrders() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(orders).orderBy(orders.createdAt);
+}
+
 export async function getOrderById(orderId: number) {
   const db = await getDb();
   if (!db) return undefined;
