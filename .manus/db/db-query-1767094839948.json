@@ -1,0 +1,9 @@
+{
+  "query": "DELETE FROM users WHERE name != 'Serhiy Zubovskyy';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4QFyn3qnDGAQCDx.root --database WixNKuSDaV8wT2kLfzbKmh --execute DELETE FROM users WHERE name != 'Serhiy Zubovskyy';",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 445
+}

@@ -71,24 +71,7 @@ const DEPARTMENTS = [
 ];
 
 export function UserManagement({ onAddUser, onUpdateUser, onDeleteUser }: UserManagementProps) {
-  const [users, setUsers] = useState<UserData[]>([
-    {
-      id: 1,
-      name: 'Иван Петров',
-      email: 'ivan@example.com',
-      role: 'admin',
-      department: 'management',
-      isActive: true,
-    },
-    {
-      id: 2,
-      name: 'Мария Сидорова',
-      email: 'maria@example.com',
-      role: 'manager',
-      department: 'sales',
-      isActive: true,
-    },
-  ]);
+  const [users, setUsers] = useState<UserData[]>([]);
 
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
