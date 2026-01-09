@@ -230,3 +230,12 @@
 - [x] Show all categories and subcategories in category selector with indentation
 - [x] Update products.create tRPC procedure to accept categoryId directly
 - [ ] Test product creation with new categories
+
+
+## Critical Bug - Product Addition Not Working
+- [x] Test product form in browser to reproduce issue
+- [x] Check browser console for errors
+- [x] Check server logs for backend errors
+- [x] Identify root cause - dimensions (width/height/depth/weight) validation requires > 0 but form defaults to 0
+- [x] Fix the issue - changed validation from positive() to min(0) to allow 0 values
+- [x] Test product addition end-to-end - all 23 tests passed
