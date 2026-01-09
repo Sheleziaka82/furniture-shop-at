@@ -133,7 +133,7 @@ export const appRouter = router({
       .input(z.object({
         name: z.string().min(1),
         description: z.string(),
-        category: z.string(),
+        category: z.string(), // Now accepts categoryId as string
         price: z.number().positive(),
         discount: z.number().min(0).max(100).optional(),
         material: z.string().optional(),
@@ -151,11 +151,10 @@ export const appRouter = router({
           throw new Error('Unauthorized: Admin access required');
         }
 
-        // Get categories to find categoryId
-        const categories = await getCategories();
-        const category = categories.find(c => c.slug === input.category);
-        if (!category) {
-          throw new Error('Invalid category');
+        // Parse categoryId from string
+        const categoryId = parseInt(input.category, 10);
+        if (isNaN(categoryId)) {
+          throw new Error('Invalid category ID');
         }
 
         // Convert price to cents
@@ -167,7 +166,7 @@ export const appRouter = router({
         const productId = await createProduct({
           name: input.name,
           description: input.description,
-          categoryId: category.id,
+          categoryId,
           price: priceInCents,
           discount: input.discount,
           material: input.material,

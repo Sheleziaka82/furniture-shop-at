@@ -13,6 +13,7 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { X } from 'lucide-react';
+import { trpc } from '@/lib/trpc';
 
 interface ProductFormProps {
   onSubmit: (data: ProductFormData) => Promise<void>;
@@ -36,16 +37,7 @@ export interface ProductFormData {
   images: string[];
 }
 
-const CATEGORIES = [
-  { value: 'sofas', label: 'Sofas' },
-  { value: 'chairs', label: 'Stühle' },
-  { value: 'tables', label: 'Tische' },
-  { value: 'beds', label: 'Betten' },
-  { value: 'cabinets', label: 'Schränke' },
-  { value: 'shelves', label: 'Regale' },
-  { value: 'lighting', label: 'Beleuchtung' },
-  { value: 'accessories', label: 'Zubehör' },
-];
+
 
 const MATERIALS = [
   { value: 'wood', label: 'Holz' },
@@ -69,6 +61,8 @@ const COLORS = [
 ];
 
 export function ProductForm({ onSubmit, onCancel, isLoading = false }: ProductFormProps) {
+  const { data: categories, isLoading: categoriesLoading } = trpc.categories.getAll.useQuery();
+  
   const [formData, setFormData] = useState<ProductFormData>({
     name: '',
     description: '',
@@ -211,11 +205,15 @@ export function ProductForm({ onSubmit, onCancel, isLoading = false }: ProductFo
                     <SelectValue placeholder="Wählen Sie eine Kategorie" />
                   </SelectTrigger>
                   <SelectContent>
-                    {CATEGORIES.map((cat) => (
-                      <SelectItem key={cat.value} value={cat.value}>
-                        {cat.label}
-                      </SelectItem>
-                    ))}
+                    {categoriesLoading ? (
+                      <SelectItem value="loading" disabled>Laden...</SelectItem>
+                    ) : (
+                      categories?.map((cat: any) => (
+                        <SelectItem key={cat.id} value={cat.id.toString()}>
+                          {cat.parentId ? `  ↳ ${cat.name}` : cat.name}
+                        </SelectItem>
+                      ))
+                    )}
                   </SelectContent>
                 </Select>
               </div>

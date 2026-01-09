@@ -222,3 +222,11 @@
 - [ ] Test category hierarchy and filtering
 - [ ] Test admin category management
 - [ ] Test product editing
+
+
+## Bug Fixes - ProductForm Categories
+- [x] Update ProductForm to use new hierarchical category system from database
+- [x] Replace static category options with dynamic loading from tRPC
+- [x] Show all categories and subcategories in category selector with indentation
+- [x] Update products.create tRPC procedure to accept categoryId directly
+- [ ] Test product creation with new categories
