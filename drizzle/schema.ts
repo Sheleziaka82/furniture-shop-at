@@ -34,9 +34,13 @@ export const categories = mysqlTable("categories", {
   id: int("id").autoincrement().primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
   slug: varchar("slug", { length: 255 }).notNull().unique(),
+  parentId: int("parentId"), // null for main categories, references parent category for subcategories
   description: text("description"),
   imageUrl: varchar("imageUrl", { length: 512 }),
+  displayOrder: int("displayOrder").default(0), // for sorting
+  isActive: boolean("isActive").default(true).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
 
 export const products = mysqlTable("products", {

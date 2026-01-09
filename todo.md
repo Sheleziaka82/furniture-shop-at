@@ -200,3 +200,25 @@
 - [x] Create catalog setup documentation
 - [ ] Add products to database through admin panel
 - [ ] Test catalog display on frontend
+
+
+## Phase 18: Category System Restructuring
+- [x] Create hierarchical categories table (parent-child relationship)
+- [x] Define categories from planetmoebel.de (Badezimmer, Garderobe & Flur, Wohnzimmer)
+- [x] Define subcategories for each main category (14 subcategories total)
+- [x] Update products table schema with categoryId foreign key
+- [x] Create seed script for categories (seed-categories.mjs)
+- [x] Seed 3 main categories and 14 subcategories to database
+- [x] Update homepage to display new categories dynamically from database
+- [x] Add category management functions in db.ts
+- [x] Add categories tRPC router with CRUD operations
+- [x] Add category management UI in admin panel (create, edit, delete)
+- [x] Add subcategory management in admin panel
+- [x] Add product editing functionality in admin panel
+- [x] Add AdminProductsList component for product management
+- [x] Add products.getAll, update, delete tRPC procedures
+- [ ] Update catalog page with category filtering
+- [ ] Update navigation menu with new categories
+- [ ] Test category hierarchy and filtering
+- [ ] Test admin category management
+- [ ] Test product editing

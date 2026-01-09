@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, isNull } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import {
   InsertUser,
@@ -110,12 +110,102 @@ export async function getUserById(id: number) {
   return result[0];
 }
 
-// Product queries
+// Category queries
 export async function getCategories() {
   const db = await getDb();
   if (!db) return [];
-  return db.select().from(categories);
+  return db.select().from(categories).orderBy(categories.displayOrder);
 }
+
+export async function getMainCategories() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(categories)
+    .where(isNull(categories.parentId))
+    .orderBy(categories.displayOrder);
+}
+
+export async function getSubcategories(parentId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(categories)
+    .where(eq(categories.parentId, parentId))
+    .orderBy(categories.displayOrder);
+}
+
+export async function getCategoryById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(categories).where(eq(categories.id, id)).limit(1);
+  return result[0];
+}
+
+export async function getCategoryBySlug(slug: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(categories).where(eq(categories.slug, slug)).limit(1);
+  return result[0];
+}
+
+export async function createCategory(data: {
+  name: string;
+  slug: string;
+  description?: string;
+  parentId?: number | null;
+  imageUrl?: string;
+  displayOrder?: number;
+}) {
+  const db = await getDb();
+  if (!db) throw new Error('Database not available');
+  
+  const [result] = await db.insert(categories).values({
+    name: data.name,
+    slug: data.slug,
+    description: data.description || null,
+    parentId: data.parentId || null,
+    imageUrl: data.imageUrl || null,
+    displayOrder: data.displayOrder || 0,
+    isActive: true,
+  });
+  
+  return Number((result as any).insertId);
+}
+
+export async function updateCategory(id: number, data: Partial<{
+  name: string;
+  slug: string;
+  description: string;
+  parentId: number | null;
+  imageUrl: string;
+  displayOrder: number;
+  isActive: boolean;
+}>) {
+  const db = await getDb();
+  if (!db) throw new Error('Database not available');
+  
+  await db.update(categories).set(data).where(eq(categories.id, id));
+}
+
+export async function deleteCategory(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error('Database not available');
+  
+  // Check if category has subcategories
+  const subcats = await getSubcategories(id);
+  if (subcats.length > 0) {
+    throw new Error('Cannot delete category with subcategories');
+  }
+  
+  // Check if category has products
+  const productsInCategory = await db.select().from(products).where(eq(products.categoryId, id)).limit(1);
+  if (productsInCategory.length > 0) {
+    throw new Error('Cannot delete category with products');
+  }
+  
+  await db.delete(categories).where(eq(categories.id, id));
+}
+
+// Product queries
 
 export async function createProduct(data: {
   name: string;
@@ -179,6 +269,50 @@ export async function createProduct(data: {
   }
 
   return productId;
+}
+
+export async function updateProduct(id: number, data: Partial<{
+  name: string;
+  description: string;
+  categoryId: number;
+  price: number;
+  discount: number;
+  material: string;
+  color: string;
+  dimensions: string;
+  weight: string;
+  stock: number;
+  isBestseller: number;
+  isNew: number;
+}>) {
+  const db = await getDb();
+  if (!db) throw new Error('Database not available');
+  
+  await db.update(products).set(data).where(eq(products.id, id));
+}
+
+export async function deleteProduct(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error('Database not available');
+  
+  // Delete product images first
+  await db.delete(productImages).where(eq(productImages.productId, id));
+  
+  // Delete product
+  await db.delete(products).where(eq(products.id, id));
+}
+
+export async function getAllProducts(limit = 100, offset = 0) {
+  const db = await getDb();
+  if (!db) return { products: [], total: 0 };
+  
+  const result = await db
+    .select()
+    .from(products)
+    .limit(limit)
+    .offset(offset);
+  
+  return { products: result, total: result.length };
 }
 
 export async function getProductsByCategory(categoryId: number, limit = 20, offset = 0) {

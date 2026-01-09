@@ -4,9 +4,11 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { Link } from 'wouter';
 import { ArrowRight, Truck, Shield, Leaf, MessageCircle } from 'lucide-react';
+import { trpc } from '@/lib/trpc';
 
 export default function Home() {
   const { t } = useLanguage();
+  const { data: mainCategories, isLoading: categoriesLoading } = trpc.categories.getMain.useQuery();
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -48,24 +50,29 @@ export default function Home() {
         <section className="py-16 md:py-24">
           <div className="container">
             <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">Kategorien</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-              {[
-                { name: t('category.living_room'), slug: 'wohnzimmer' },
-                { name: t('category.bedroom'), slug: 'schlafzimmer' },
-                { name: t('category.dining_room'), slug: 'esszimmer' },
-                { name: t('category.office'), slug: 'buero' },
-                { name: t('category.outdoor'), slug: 'outdoor' },
-              ].map((category) => (
-                <Link key={category.slug} href={`/catalog?category=${category.slug}`}>
-                  <div className="bg-card border border-border rounded-lg p-8 text-center hover:shadow-lg hover:scale-105 transition-all duration-300 cursor-pointer">
-                    <div className="w-16 h-16 bg-primary/10 rounded-lg mx-auto mb-4 flex items-center justify-center">
-                      <div className="text-2xl">🛋️</div>
+            {categoriesLoading ? (
+              <div className="text-center text-muted-foreground">Kategorien werden geladen...</div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {mainCategories?.map((category) => (
+                  <Link key={category.id} href={`/catalog?category=${category.slug}`}>
+                    <div className="bg-card border border-border rounded-lg p-8 text-center hover:shadow-lg hover:scale-105 transition-all duration-300 cursor-pointer">
+                      <div className="w-16 h-16 bg-primary/10 rounded-lg mx-auto mb-4 flex items-center justify-center">
+                        <div className="text-2xl">
+                          {category.name === 'Badezimmer' && '🚿'}
+                          {category.name === 'Wohnzimmer' && '🛋️'}
+                          {category.name === 'Garderobe & Flur' && '👔'}
+                        </div>
+                      </div>
+                      <h3 className="font-semibold text-lg">{category.name}</h3>
+                      {category.description && (
+                        <p className="text-sm text-muted-foreground mt-2">{category.description}</p>
+                      )}
                     </div>
-                    <h3 className="font-semibold text-lg">{category.name}</h3>
-                  </div>
-                </Link>
-              ))}
-            </div>
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
         </section>
 

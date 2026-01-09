@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Link } from 'wouter';
 import { ProductForm, type ProductFormData } from '@/components/ProductForm';
 import { UserManagement } from '@/components/UserManagement';
+import { AdminCategories } from '@/components/AdminCategories';
+import { AdminProductsList } from '@/components/AdminProductsList';
 import AdminOrders from './AdminOrders';
 import {
   BarChart3,
@@ -23,7 +25,7 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import { trpc } from '@/lib/trpc';
 
-type AdminTab = 'dashboard' | 'products' | 'orders' | 'customers' | 'settings' | 'users';
+type AdminTab = 'dashboard' | 'products' | 'categories' | 'orders' | 'customers' | 'settings' | 'users';
 type ProductsSubTab = 'list' | 'add';
 
 export default function AdminDashboard() {
@@ -182,6 +184,17 @@ export default function AdminDashboard() {
                   >
                     <Package className="w-5 h-5" />
                     <span className="font-semibold">Produkte</span>
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('categories')}
+                    className={`flex items-center gap-3 px-6 py-4 border-b border-border transition-colors ${
+                      activeTab === 'categories'
+                        ? 'bg-primary text-primary-foreground'
+                        : 'text-foreground hover:bg-muted'
+                    }`}
+                  >
+                    <Package className="w-5 h-5" />
+                    <span className="font-semibold">Kategorien</span>
                   </button>
                   <button
                     onClick={() => {
@@ -344,9 +357,7 @@ export default function AdminDashboard() {
                           + Neues Produkt
                         </Button>
                       </div>
-                      <p className="text-muted-foreground">
-                        Produktliste wird hier angezeigt (in Entwicklung)
-                      </p>
+                      <AdminProductsList />
                     </div>
                   ) : (
                     <div>
@@ -364,6 +375,13 @@ export default function AdminDashboard() {
                       />
                     </div>
                   )}
+                </div>
+              )}
+
+              {/* Categories Tab */}
+              {activeTab === 'categories' && (
+                <div className="bg-card border border-border rounded-lg p-6">
+                  <AdminCategories />
                 </div>
               )}
 

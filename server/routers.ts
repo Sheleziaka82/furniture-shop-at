@@ -8,6 +8,13 @@ import { ENV } from "./_core/env";
 import { createStripeLineItems, createShippingLineItem } from "./stripe-products";
 import {
   getCategories,
+  getMainCategories,
+  getSubcategories,
+  getCategoryById,
+  getCategoryBySlug,
+  createCategory,
+  updateCategory,
+  deleteCategory,
   getProductsByCategory,
   getProductBySlug,
   getProductById,
@@ -25,6 +32,9 @@ import {
   getOrderItems,
   getDb,
   createProduct,
+  updateProduct,
+  deleteProduct,
+  getAllProducts,
 } from "./db";
 import { orders } from "../drizzle/schema";
 import { eq } from "drizzle-orm";
@@ -32,6 +42,75 @@ import { sendShippingNotificationEmail } from "./email-service";
 
 export const appRouter = router({
   system: systemRouter,
+  
+  // Categories routes
+  categories: router({
+    getAll: publicProcedure.query(async () => {
+      return getCategories();
+    }),
+    getMain: publicProcedure.query(async () => {
+      return getMainCategories();
+    }),
+    getSubcategories: publicProcedure
+      .input(z.object({ parentId: z.number() }))
+      .query(async ({ input }) => {
+        return getSubcategories(input.parentId);
+      }),
+    getById: publicProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ input }) => {
+        return getCategoryById(input.id);
+      }),
+    getBySlug: publicProcedure
+      .input(z.object({ slug: z.string() }))
+      .query(async ({ input }) => {
+        return getCategoryBySlug(input.slug);
+      }),
+    create: protectedProcedure
+      .input(z.object({
+        name: z.string(),
+        slug: z.string(),
+        description: z.string().optional(),
+        parentId: z.number().nullable().optional(),
+        imageUrl: z.string().optional(),
+        displayOrder: z.number().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'admin') {
+          throw new Error('Only admins can create categories');
+        }
+        return createCategory(input);
+      }),
+    update: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        name: z.string().optional(),
+        slug: z.string().optional(),
+        description: z.string().optional(),
+        parentId: z.number().nullable().optional(),
+        imageUrl: z.string().optional(),
+        displayOrder: z.number().optional(),
+        isActive: z.boolean().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'admin') {
+          throw new Error('Only admins can update categories');
+        }
+        const { id, ...data } = input;
+        await updateCategory(id, data);
+        return { success: true };
+      }),
+    delete: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'admin') {
+          throw new Error('Only admins can delete categories');
+        }
+        await deleteCategory(input.id);
+        return { success: true };
+      }),
+  }),
+  
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {
@@ -102,6 +181,52 @@ export const appRouter = router({
         });
 
         return { success: true, productId };
+      }),
+    
+    // Admin: Get all products
+    getAll: protectedProcedure
+      .query(async ({ ctx }) => {
+        if (ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Admin access required');
+        }
+        return getAllProducts();
+      }),
+    
+    // Admin: Update product
+    update: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        name: z.string().optional(),
+        description: z.string().optional(),
+        categoryId: z.number().optional(),
+        price: z.number().optional(),
+        discount: z.number().optional(),
+        material: z.string().optional(),
+        color: z.string().optional(),
+        dimensions: z.string().optional(),
+        weight: z.string().optional(),
+        stock: z.number().optional(),
+        isBestseller: z.number().optional(),
+        isNew: z.number().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Admin access required');
+        }
+        const { id, ...data } = input;
+        await updateProduct(id, data);
+        return { success: true };
+      }),
+    
+    // Admin: Delete product
+    delete: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Admin access required');
+        }
+        await deleteProduct(input.id);
+        return { success: true };
       }),
     getByCategory: publicProcedure
       .input(z.object({
