@@ -181,3 +181,9 @@
 - [x] Added products.create tRPC procedure with admin check
 - [x] Connected AdminDashboard to use tRPC mutation
 - [ ] Test product addition flow end-to-end
+
+
+## Critical Bug Fixes
+- [x] Fix React hook error #310 in AdminDashboard - useMutation called outside component body
+- [x] Move createProductMutation hook inside component function before conditional return
+- [x] Test admin panel access after fix - all tests passed

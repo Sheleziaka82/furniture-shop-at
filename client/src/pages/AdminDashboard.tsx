@@ -33,6 +33,19 @@ export default function AdminDashboard() {
   const [productsSubTab, setProductsSubTab] = useState<ProductsSubTab>('list');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const createProductMutation = trpc.products.create.useMutation({
+    onSuccess: () => {
+      toast.success('Produkt erfolgreich hinzugefügt');
+      setProductsSubTab('list');
+      setIsSubmitting(false);
+    },
+    onError: (error: any) => {
+      console.error(error);
+      toast.error('Fehler beim Hinzufügen des Produkts: ' + error.message);
+      setIsSubmitting(false);
+    },
+  });
+
   // Check if user is admin
   if (user?.role !== 'admin') {
     return (
@@ -111,19 +124,6 @@ export default function AdminDashboard() {
     await logout();
     toast.success('Sie wurden abgemeldet');
   };
-
-  const createProductMutation = trpc.products.create.useMutation({
-    onSuccess: () => {
-      toast.success('Produkt erfolgreich hinzugefügt');
-      setProductsSubTab('list');
-      setIsSubmitting(false);
-    },
-    onError: (error: any) => {
-      console.error(error);
-      toast.error('Fehler beim Hinzufügen des Produkts: ' + error.message);
-      setIsSubmitting(false);
-    },
-  });
 
   const handleAddProduct = async (data: ProductFormData) => {
     setIsSubmitting(true);
