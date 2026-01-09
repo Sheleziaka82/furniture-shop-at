@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { trpc } from '@/lib/trpc';
 
 type AdminTab = 'dashboard' | 'products' | 'orders' | 'customers' | 'settings' | 'users';
 type ProductsSubTab = 'list' | 'add';
@@ -111,19 +112,25 @@ export default function AdminDashboard() {
     toast.success('Sie wurden abgemeldet');
   };
 
+  const createProductMutation = trpc.products.create.useMutation({
+    onSuccess: () => {
+      toast.success('Produkt erfolgreich hinzugefügt');
+      setProductsSubTab('list');
+      setIsSubmitting(false);
+    },
+    onError: (error: any) => {
+      console.error(error);
+      toast.error('Fehler beim Hinzufügen des Produkts: ' + error.message);
+      setIsSubmitting(false);
+    },
+  });
+
   const handleAddProduct = async (data: ProductFormData) => {
     setIsSubmitting(true);
     try {
-      // Hier würde der API-Aufruf stattfinden
-      // await trpc.products.create.useMutation(data);
-      console.log('Produkt hinzufügen:', data);
-      toast.success('Produkt erfolgreich hinzugefügt');
-      setProductsSubTab('list');
+      await createProductMutation.mutateAsync(data);
     } catch (error) {
-      console.error(error);
-      toast.error('Fehler beim Hinzufügen des Produkts');
-    } finally {
-      setIsSubmitting(false);
+      // Error already handled in onError
     }
   };
 

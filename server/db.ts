@@ -117,6 +117,70 @@ export async function getCategories() {
   return db.select().from(categories);
 }
 
+export async function createProduct(data: {
+  name: string;
+  description: string;
+  categoryId: number;
+  price: number;
+  discount?: number;
+  material?: string;
+  color?: string;
+  width?: number;
+  height?: number;
+  depth?: number;
+  weight?: string;
+  stock?: number;
+  images?: string[];
+}) {
+  const db = await getDb();
+  if (!db) throw new Error('Database not available');
+
+  // Generate slug from name
+  const slug = data.name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    + '-' + Date.now();
+
+  // Format dimensions
+  const dimensions = data.width && data.height && data.depth 
+    ? `${data.width}x${data.height}x${data.depth}cm`
+    : null;
+
+  // Insert product
+  const [result] = await db.insert(products).values({
+    name: data.name,
+    slug,
+    description: data.description || null,
+    categoryId: data.categoryId,
+    price: data.price,
+    discount: data.discount || 0,
+    material: data.material || null,
+    color: data.color || null,
+    dimensions,
+    weight: data.weight || null,
+    stock: data.stock || 0,
+  });
+
+  const productId = Number((result as any).insertId);
+
+  // Insert images if provided
+  if (data.images && data.images.length > 0) {
+    await Promise.all(
+      data.images.map((imageUrl, index) =>
+        db.insert(productImages).values({
+          productId,
+          imageUrl,
+          altText: data.name,
+          displayOrder: index,
+        })
+      )
+    );
+  }
+
+  return productId;
+}
+
 export async function getProductsByCategory(categoryId: number, limit = 20, offset = 0) {
   const db = await getDb();
   if (!db) return { products: [], total: 0 };

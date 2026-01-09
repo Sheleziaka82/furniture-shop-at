@@ -24,6 +24,7 @@ import {
   getOrderById,
   getOrderItems,
   getDb,
+  createProduct,
 } from "./db";
 import { orders } from "../drizzle/schema";
 import { eq } from "drizzle-orm";
@@ -47,6 +48,61 @@ export const appRouter = router({
     getCategories: publicProcedure.query(async () => {
       return getCategories();
     }),
+    
+    // Admin: Create product
+    create: protectedProcedure
+      .input(z.object({
+        name: z.string().min(1),
+        description: z.string(),
+        category: z.string(),
+        price: z.number().positive(),
+        discount: z.number().min(0).max(100).optional(),
+        material: z.string().optional(),
+        color: z.string().optional(),
+        width: z.number().positive().optional(),
+        height: z.number().positive().optional(),
+        depth: z.number().positive().optional(),
+        weight: z.number().positive().optional(),
+        stock: z.number().min(0).optional(),
+        images: z.array(z.string()).optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        // Check if user is admin
+        if (ctx.user.role !== 'admin') {
+          throw new Error('Unauthorized: Admin access required');
+        }
+
+        // Get categories to find categoryId
+        const categories = await getCategories();
+        const category = categories.find(c => c.slug === input.category);
+        if (!category) {
+          throw new Error('Invalid category');
+        }
+
+        // Convert price to cents
+        const priceInCents = Math.round(input.price * 100);
+
+        // Format weight as string with unit
+        const weightStr = input.weight ? `${input.weight}kg` : undefined;
+
+        const productId = await createProduct({
+          name: input.name,
+          description: input.description,
+          categoryId: category.id,
+          price: priceInCents,
+          discount: input.discount,
+          material: input.material,
+          color: input.color,
+          width: input.width,
+          height: input.height,
+          depth: input.depth,
+          weight: weightStr,
+          stock: input.stock,
+          images: input.images,
+        });
+
+        return { success: true, productId };
+      }),
     getByCategory: publicProcedure
       .input(z.object({
         categoryId: z.number(),

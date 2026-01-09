@@ -171,3 +171,13 @@
 - [x] Add getAllOrders tRPC procedure for admin
 - [x] Integrate AdminOrders component into AdminDashboard
 - [ ] Add order details view with items list
+
+
+## Bug Fixes
+- [x] Fix product addition form - products not being added despite entering all data
+- [x] Check ProductForm validation and submission logic
+- [x] Verify backend tRPC procedure for adding products
+- [x] Added createProduct function in db.ts
+- [x] Added products.create tRPC procedure with admin check
+- [x] Connected AdminDashboard to use tRPC mutation
+- [ ] Test product addition flow end-to-end
